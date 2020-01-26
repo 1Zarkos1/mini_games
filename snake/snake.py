@@ -53,7 +53,7 @@ def play_func(stdscr):
         # check if pressed key within accepted accepted keys and range of values
         if next_step not in ('KEY_UP', 'KEY_DOWN', 'KEY_RIGHT',
                              'KEY_LEFT'):
-            next_step = prev_step
+            continue
 
         # check if next position if within the window range and change the values
         # to support transition between borders
