@@ -45,36 +45,42 @@ def play_func(stdscr):
         except Exception:
             next_step = prev_step
 
+        x = pos[-1][1]
+        y = pos[-1][0]
+
         if next_step not in ('KEY_UP', 'KEY_DOWN', 'KEY_RIGHT',
-                     'KEY_LEFT', 'q'):
+                             'KEY_LEFT', 'q'):
             continue
         elif next_step == 'KEY_UP':
-            pos.append([pos[-1][0]-1, pos[-1][1]])
+            y -= 1
         elif next_step == 'KEY_DOWN':
-            pos.append([pos[-1][0]+1, pos[-1][1]])
+            y += 1
         elif next_step == 'KEY_RIGHT':
-            pos.append([pos[-1][0], pos[-1][1]+1])
+            x += 1
         elif next_step == 'KEY_LEFT':
-            pos.append([pos[-1][0], pos[-1][1]-1])
+            x -= 1
 
-        if pos[-1][0] >= height:
-            pos[-1][0] = 0
-        elif pos[-1][0] < 0:
-            pos[-1][0] = height-1
-        elif pos[-1][1] >= width:
-            pos[-1][1] = 0
-        elif pos[-1][1] < width:
-            pos[-1][1] = width-1
+        if y >= height:
+            y = 0
+        elif y < 0:
+            y = height-1
+        elif x >= width:
+            x = 0
+        elif x < 0:
+            x = width-1
 
-        if pos[-1] in pos[0:-1]:
-            print(f'The game is over! Your score: {len(pos[0:-1])}!')
+        if [y, x] in pos:
+            print(f'The game is over! Your score: {len(pos)}!')
             break
 
-        if rand_piece == pos[-1]:
+        if rand_piece == [y, x]:
             rand_piece = 0
         else:
             pos.pop(0)
 
+        pos.append([y, x])
+
         prev_step = next_step
+
 
 curses.wrapper(play_func)
