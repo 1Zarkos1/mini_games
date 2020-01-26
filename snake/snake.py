@@ -15,13 +15,13 @@ def play_func(stdscr):
     curses.resize_term(height, width)
     curses.curs_set(0)
     stdscr.keypad(True)
-    k = 0
+    next_step = 0
     pos = [[height//2, width//2]]
     rand_piece = 0
     stdscr.timeout(speed*10)
-    pre_step = 0
+    prev_step = 0
 
-    while k != 'q':
+    while next_step != 'q':
 
         stdscr.clear()
 
@@ -41,20 +41,20 @@ def play_func(stdscr):
         stdscr.refresh()
 
         try:
-            k = stdscr.getkey()
+            next_step = stdscr.getkey()
         except Exception:
-            k = pre_step
+            next_step = prev_step
 
-        if k not in ('KEY_UP', 'KEY_DOWN', 'KEY_RIGHT',
+        if next_step not in ('KEY_UP', 'KEY_DOWN', 'KEY_RIGHT',
                      'KEY_LEFT', 'q'):
             continue
-        elif k == 'KEY_UP':
+        elif next_step == 'KEY_UP':
             pos.append([pos[-1][0]-1, pos[-1][1]])
-        elif k == 'KEY_DOWN':
+        elif next_step == 'KEY_DOWN':
             pos.append([pos[-1][0]+1, pos[-1][1]])
-        elif k == 'KEY_RIGHT':
+        elif next_step == 'KEY_RIGHT':
             pos.append([pos[-1][0], pos[-1][1]+1])
-        elif k == 'KEY_LEFT':
+        elif next_step == 'KEY_LEFT':
             pos.append([pos[-1][0], pos[-1][1]-1])
 
         if pos[-1][0] >= height:
@@ -75,7 +75,6 @@ def play_func(stdscr):
         else:
             pos.pop(0)
 
-        pre_step = k
-
+        prev_step = next_step
 
 curses.wrapper(play_func)
