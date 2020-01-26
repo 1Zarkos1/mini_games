@@ -1,40 +1,52 @@
 import curses
 import random
 
+""" width = int(input('Choose screen width (10 to 100): '))
+height = int(input('Choose board height (10 to 100): '))
+speed = int(input('Choose speed of the game (1 (fastest) to 20): ')) """
+
+width = 40
+height = 20
+speed = 2
+
+
 def play_func(stdscr):
-    init_y = 40
-    init_x = 80
     stdscr = curses.initscr()
-    curses.resize_term(init_y, init_x)
+    curses.resize_term(height, width)
     curses.curs_set(0)
     stdscr.keypad(True)
     k = 0
-    pos = [[init_y//2, init_x//2]]
+    pos = [[height//2, width//2]]
     rand_piece = 0
+    stdscr.timeout(speed*10)
+    pre_step = 0
 
     while k != 'q':
-        
+
         stdscr.clear()
-        
+
         while True:
             if not rand_piece:
                 rand_piece = [
-                    random.randint(0, init_y-1), random.randint(0, init_x-1)
+                    random.randint(0, height-1), random.randint(0, width-1)
                 ]
                 if rand_piece not in pos:
                     break
             break
-        
+
         for coord in pos:
             stdscr.addstr(*coord, '*')
         stdscr.addstr(*rand_piece, '*')
 
         stdscr.refresh()
 
-        k = stdscr.getkey()
+        try:
+            k = stdscr.getkey()
+        except Exception:
+            k = pre_step
 
         if k not in ('KEY_UP', 'KEY_DOWN', 'KEY_RIGHT',
-                    'KEY_LEFT', 'q'):
+                     'KEY_LEFT', 'q'):
             continue
         elif k == 'KEY_UP':
             pos.append([pos[-1][0]-1, pos[-1][1]])
@@ -45,22 +57,25 @@ def play_func(stdscr):
         elif k == 'KEY_LEFT':
             pos.append([pos[-1][0], pos[-1][1]-1])
 
-        if pos[-1][0] > init_y:
+        if pos[-1][0] >= height:
             pos[-1][0] = 0
         elif pos[-1][0] < 0:
-            pos[-1][0] = init_y-1
-        elif pos[-1][1] > init_x:
+            pos[-1][0] = height-1
+        elif pos[-1][1] >= width:
             pos[-1][1] = 0
-        elif pos[-1][1] > init_x:
-            pos[-1][1] = init_x-1
-        
+        elif pos[-1][1] < width:
+            pos[-1][1] = width-1
+
         if pos[-1] in pos[0:-1]:
-            print('You lost!')
+            print(f'The game is over! Your score: {len(pos[0:-1])}!')
             break
 
         if rand_piece == pos[-1]:
             rand_piece = 0
         else:
             pos.pop(0)
+
+        pre_step = k
+
 
 curses.wrapper(play_func)
